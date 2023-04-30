@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #weather-info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather App</h1>
+    <input type="text" id="location-input" placeholder="Enter a location">
+    <button onclick="getWeatherData()">Get Weather</button>
+    <div id="weather-info"></div>
+
+    <script>
+        async function getWeatherData() {
+            const location = document.getElementById('location-input').value;
+            const response = await fetch(`http://aggregated-service-service.app.svc.cluster.local:5003/api/agg_data?address=${location}`);
+            // const response = await fetch(`http://localhost:5003/api/agg_data?address=${location}`);
+            const data = await response.json();
+            console.log(data);
+
+            const weatherInfoDiv = document.getElementById('weather-info');
+            if (data.error) {
+                weatherInfoDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+            } else {
+                weatherInfoDiv.innerHTML = `
+                    <p><strong>Location:</strong> ${data.address}</p>
+                    <p><strong>Latitude:</strong> ${data.latitude}</p>
+                    <p><strong>Longitude:</strong> ${data.longitude}</p>
+                    <p><strong>Temperature:</strong> ${data.temperature}°C</p>
+                    <p><strong>Windspeed:</strong> ${data.windspeed} m/s</p>
+                    <p><strong>Wind direction:</strong> ${data.winddirection}°</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
